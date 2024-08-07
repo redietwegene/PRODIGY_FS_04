@@ -25,7 +25,7 @@ const Signup = () => {
         formData.append("password",password)
         try {
           const response = await axios.post("http://localhost:3000/signup",formData);
-          if(response.status==200){
+          if(response.status==201){
           setUsername('');
           setEmail('');
           setPassword('');
