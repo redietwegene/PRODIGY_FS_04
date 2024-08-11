@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import axios from "axios"
-const Signup = () => {
+const SignUp = () => {
     const navigateTo = useNavigate();
 
     const [name, setUsername] = useState("");
@@ -25,7 +25,7 @@ const Signup = () => {
         formData.append("password",password)
         try {
           const response = await axios.post("http://localhost:3000/signup",formData);
-          if(response.status==201){
+          if(response.status==200){
           setUsername('');
           setEmail('');
           setPassword('');
@@ -39,7 +39,7 @@ const Signup = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center min-h-screen bg-blue-400">
             <div className="w-full max-w-sm p-8 bg-white rounded shadow-lg">
                 <h2 className="mb-6 text-2xl font-semibold text-center text-gray-700">SignUp</h2>
                 <form onSubmit={handleSubmit}>
@@ -98,7 +98,7 @@ const Signup = () => {
                 <div className="flex justify-center">
                     <p>Already have an account?</p>
                     <h5 className="text-green-800 font-medium">
-                        <Link to="/">Login</Link>
+                        <Link to="/login">Login</Link>
                     </h5>
                 </div>
             </div>
@@ -106,4 +106,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default SignUp;
