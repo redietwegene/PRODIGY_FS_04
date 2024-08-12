@@ -101,14 +101,14 @@ const Home = () => {
     }, [dispatch]);
 
     return (
-        <div className="flex w-full border border-gray-300 rounded-lg shadow-md overflow-hidden">
+        <div className="flex w-full border border-gray-700 rounded-lg shadow-lg overflow-hidden">
             {/* User Search / My Chats */}
             <div
                 className={`${
                     selectedChat ? "hidden" : "block"
-                } sm:w-1/3 w-full h-[80vh] bg-green-100 border-r border-gray-300 relative`}
+                } sm:w-1/3 w-full h-[80vh] bg-gray-800 border-r border-gray-700 relative`}
             >
-                <div className="absolute bottom-4 right-4 cursor-pointer text-gray-700 hover:text-gray-900">
+                <div className="absolute bottom-4 right-4 cursor-pointer text-gray-400 hover:text-gray-200">
                     <MdChat
                         title="New Chat"
                         fontSize={32}
@@ -122,7 +122,7 @@ const Home = () => {
             <div
                 className={`${
                     !selectedChat ? "hidden" : "block"
-                } sm:w-2/3 w-full h-[80vh] bg-blue-100 relative overflow-hidden`}
+                } sm:w-2/3 w-full h-[80vh] bg-gray-900 relative overflow-hidden`}
             >
                 {selectedChat ? (
                     <MessageBox chatId={selectedChat?._id} />

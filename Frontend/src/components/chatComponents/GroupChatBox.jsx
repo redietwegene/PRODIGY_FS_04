@@ -112,37 +112,39 @@ const GroupChatBox = () => {
   };
 
   return (
-    <div className="flex -m-2 sm:-m-4 flex-col items-center my-6 text-slate-300 min-h-screen w-full fixed top-0 justify-center z-50">
-      <div className="p-3 pt-4 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[40%] min-w-72 max-w-[1000px] border border-slate-400 bg-slate-800 rounded-lg h-fit mt-5 transition-all relative">
-        <h2 className="text-2xl underline underline-offset-8 font-semibold text-slate-100 w-full text-center mb-2">
+    <div className="flex flex-col items-center justify-center my-6 min-h-screen w-full fixed top-0 z-50 bg-black bg-opacity-50">
+      <div className="p-5 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[40%] max-w-[1000px] border border-gray-700 bg-gray-800 rounded-lg shadow-lg">
+        <h2 className="text-2xl underline underline-offset-8 font-semibold text-white text-center mb-4">
           Create a Group
         </h2>
-        <div className="w-full py-4 justify-evenly flex flex-wrap items-center gap-3">
-          <div className="w-full flex flex-nowrap items-center justify-center gap-2">
+        <div className="w-full py-4 flex flex-wrap items-center gap-4">
+          <div className="w-full flex items-center gap-2">
             <input
               value={inputUserName}
               id="search"
               type="text"
               placeholder="Search Users..."
-              className="w-2/3 border border-slate-600 py-1 px-2 font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
+              className="w-2/3 border border-gray-600 py-2 px-3 rounded-md bg-gray-700 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) => setInputUserName(e.target.value)}
             />
-            <label htmlFor="search" className="cursor-pointer">
-              <FaSearch title="Search Users" />
-            </label>
+            <FaSearch title="Search Users" className="text-white cursor-pointer" />
           </div>
-          <div ref={groupUser} className="flex w-full px-4 gap-1 py-2 overflow-auto scroll-style-x">
+          <div ref={groupUser} className="flex w-full gap-2 py-2 overflow-x-auto scrollbar-hide">
             {isGroupUsers.length > 0 &&
               isGroupUsers.map((user) => (
-                <div key={user._id} className="flex justify-center items-center gap-1 border border-slate-600 py-1 px-2 font-normal rounded-md cursor-pointer bg-transparent active:bg-black/20 text-nowrap">
+                <div key={user._id} className="flex items-center gap-2 border border-gray-600 py-2 px-3 rounded-md bg-gray-700 text-white">
                   <h1>{user.firstName}</h1>
-                  <div title={`Remove ${user.firstName}`} onClick={() => handleRemoveGroupUser(user._id)} className="bg-black/15 hover:bg-black/50 h-6 w-6 m-0.5 rounded-md flex items-center justify-center cursor-pointer">
-                    <MdOutlineClose size={18} />
+                  <div
+                    title={`Remove ${user.firstName}`}
+                    onClick={() => handleRemoveGroupUser(user._id)}
+                    className="bg-red-600 hover:bg-red-800 h-6 w-6 rounded-md flex items-center justify-center cursor-pointer"
+                  >
+                    <MdOutlineClose size={18} className="text-white" />
                   </div>
                 </div>
               ))}
           </div>
-          <div className="flex flex-col w-full px-4 gap-1 py-2 overflow-y-auto overflow-hidden scroll-style h-[50vh]">
+          <div className="flex flex-col w-full h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
             {selectedUsers.length === 0 && isChatLoading ? (
               <ChatShimmer />
             ) : (
@@ -153,16 +155,24 @@ const GroupChatBox = () => {
                   </div>
                 )}
                 {selectedUsers.map((user) => (
-                  <div key={user._id} className="w-full h-16 border-slate-500 border rounded-lg flex justify-start items-center p-2 font-semibold gap-2 hover:bg-black/50 transition-all cursor-pointer text-white" onClick={() => {
-                    addGroupUser(user);
-                    setInputUserName("");
-                  }}>
-                    <img className="h-12 min-w-12 rounded-full" src={user.image} alt="user" />
-                    <div className="w-full">
-                      <span className="line-clamp-1 capitalize">
+                  <div
+                    key={user._id}
+                    className="w-full h-16 border border-gray-600 rounded-lg flex items-center p-2 gap-3 hover:bg-gray-700 cursor-pointer text-white"
+                    onClick={() => {
+                      addGroupUser(user);
+                      setInputUserName("");
+                    }}
+                  >
+                    <img
+                      className="h-12 w-12 rounded-full object-cover"
+                      src={user.image}
+                      alt="user"
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-semibold capitalize">
                         {user.firstName} {user.lastName}
                       </span>
-                      <span className="text-xs font-light">
+                      <span className="text-xs font-light text-gray-400">
                         {SimpleDateAndTime(user.createdAt)}
                       </span>
                     </div>
@@ -172,22 +182,26 @@ const GroupChatBox = () => {
             )}
           </div>
         </div>
-        <div className="w-full flex flex-nowrap items-center justify-center gap-2">
+        <div className="w-full flex items-center gap-2">
           <input
             type="text"
             placeholder="Group Name"
-            className="w-2/3 border border-slate-600 py-1 px-2 font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
+            className="w-2/3 border border-gray-600 py-2 px-3 rounded-md bg-gray-700 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setGroupName(e.target.value)}
           />
           <button
-            className="border border-slate-600 py-1 px-2 rounded-lg bg-green-400 text-black font-semibold hover:text-white hover:bg-green-700"
+            className="border border-gray-600 py-2 px-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-green-700"
             onClick={handleCreateGroupChat}
           >
             Create
           </button>
         </div>
-        <div title="Close" onClick={() => dispatch(setGroupChatBox())} className="bg-black/15 hover:bg-black/50 h-7 w-7 rounded-md flex items-center justify-center absolute top-3 right-3 cursor-pointer">
-          <MdOutlineClose size={22} />
+        <div
+          title="Close"
+          onClick={() => dispatch(setGroupChatBox())}
+          className="bg-red-600 hover:bg-red-800 h-7 w-7 rounded-md flex items-center justify-center absolute top-3 right-3 cursor-pointer"
+        >
+          <MdOutlineClose size={22} className="text-white" />
         </div>
       </div>
     </div>

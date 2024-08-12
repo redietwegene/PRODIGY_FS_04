@@ -81,8 +81,8 @@ const UserSearch = () => {
 
     return (
         <>
-            <div className="p-6 w-full h-[7vh] font-semibold flex justify-between items-center bg-gray-800 text-white border-r border-gray-600">
-                <h1 className="mr-2 whitespace-nowrap">New Chat</h1>
+            <div className="p-4 w-full h-[7vh] font-semibold flex justify-between items-center bg-gray-900 text-gray-100 border-r border-gray-700">
+                <h1 className="text-lg whitespace-nowrap">New Chat</h1>
                 <div className="w-2/3 flex items-center gap-2">
                     <input
                         id="search"
@@ -96,20 +96,20 @@ const UserSearch = () => {
                     </label>
                 </div>
             </div>
-            <div className="flex flex-col w-full px-4 gap-2 py-2 overflow-y-auto h-[73vh] scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+            <div className="flex flex-col w-full px-3 gap-2 py-2 overflow-y-auto h-[73vh] scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
                 {selectedUsers.length === 0 && isChatLoading ? (
                     <ChatShimmer />
                 ) : (
                     <>
                         {selectedUsers.length === 0 && (
-                            <div className="w-full h-full flex justify-center items-center text-white">
-                                <h1 className="text-base font-semibold">No users registered.</h1>
+                            <div className="w-full h-full flex justify-center items-center text-gray-400">
+                                <h1 className="text-base font-medium">No users registered.</h1>
                             </div>
                         )}
                         {selectedUsers.map((user) => (
                             <div
                                 key={user._id}
-                                className="w-full h-16 border border-gray-600 rounded-lg flex items-center p-3 font-semibold gap-2 hover:bg-gray-700 transition cursor-pointer text-white"
+                                className="w-full h-16 border border-gray-600 rounded-lg flex items-center p-3 font-semibold gap-3 hover:bg-gray-700 transition cursor-pointer text-gray-100"
                                 onClick={() => handleCreateChat(user._id)}
                             >
                                 <img

@@ -45,7 +45,7 @@ const Applayout = () => {
 
     return (
         <div className="relative min-h-screen">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1611746869696-d09bce200020?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center filter blur-lg"></div>
+            <div className="absolute inset-0 bg-[url('https://png.pngtree.com/thumb_back/fh260/background/20230716/pngtree-portfolio-displays-and-mobile-apps-with-3d-shapes-chat-messages-and-image_3879137.jpg')] bg-cover bg-center filter "></div>
             <div className="relative z-10">
                 <ToastContainer
                     position={toastPosition}
