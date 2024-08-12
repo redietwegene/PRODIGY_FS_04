@@ -8,7 +8,7 @@ import SignIn from "./pages/SignIn";
 import Error from "./pages/Error";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import store from "./redux/store";
 import ProfileDetail from "./components/ProfileDetail";
 import Loading from "./components/loading/Loading";
@@ -42,40 +42,45 @@ const Applayout = () => {
             window.removeEventListener("resize", handleResize);
         };
     }, []);
+
     return (
-        <div>
-            <ToastContainer
-                position={toastPosition}
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="dark"
-                stacked
-                limit={3}
-                toastStyle={{
-                    border: "1px solid #dadadaaa",
-                    textTransform: "capitalize",
-                }}
-                // transition:Bounce
-            />
-            <Header />
-            <div className="h-16 md:h-20"></div>
-            <div className="min-h-[85vh] p-2 sm:p-4  bg-gradient-to-tr to-black via-blue-900 from-black">
-                <Outlet />
-                {isProfileDetails && <ProfileDetail />}
-                {isGroupChatBox && <GroupChatBox />}
-                {isNotificationBox && <NotificationBox />}
+        <div className="relative min-h-screen">
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1611746869696-d09bce200020?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center filter blur-lg"></div>
+            <div className="relative z-10">
+                <ToastContainer
+                    position={toastPosition}
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="dark"
+                    stacked
+                    limit={3}
+                    toastStyle={{
+                        border: "1px solid #dadadaaa",
+                        textTransform: "capitalize",
+                    }}
+                    // transition:Bounce
+                />
+                <Header />
+                <div className="h-16 md:h-20"></div>
+                <div className="min-h-[85vh] p-2 sm:p-4 bg-gradient-to-tr to-transparent">
+                    <Outlet />
+                    {isProfileDetails && <ProfileDetail />}
+                    {isGroupChatBox && <GroupChatBox />}
+                    {isNotificationBox && <NotificationBox />}
+                </div>
+                {isLoading && <Loading />}
+                {/* <Footer /> */}
             </div>
-            {isLoading && <Loading />}
-            {/* <Footer /> */}
         </div>
     );
 };
+
 const routers = createBrowserRouter([
     {
         path: "/",

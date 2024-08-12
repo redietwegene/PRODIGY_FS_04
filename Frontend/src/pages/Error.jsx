@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Error = () => {
 	return (
-		<div className="w-full h-dvh flex flex-col items-center justify-center bg-[#1E293B] text-white">
+		<div className="w-full h-dvh flex flex-col items-center justify-center text-white">
 			<h1 className="text-xl sm:text-2xl font-bold">
 				Something went wrong
 			</h1>

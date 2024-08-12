@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { addSelectedChat } from "../../redux/slices/myChatSlice";
@@ -11,16 +10,15 @@ import { VscError } from "react-icons/vsc";
 
 const MemberAdd = ({ setMemberAddBox }) => {
 	const dispatch = useDispatch();
-	const isChatLoading = useSelector(
-		(store) => store?.condition?.isChatLoading
-	);
+	const isChatLoading = useSelector((store) => store?.condition?.isChatLoading);
 	const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
 	const [users, setUsers] = useState([]);
 	const [selectedUsers, setSelectedUsers] = useState([]);
 	const [inputUserName, setInputUserName] = useState("");
 	const [addUserName, setAddUserName] = useState("");
 	const [addUserId, setAddUserId] = useState("");
-	// All Users Api Call
+
+	// Fetch all users
 	useEffect(() => {
 		const getAllUsers = () => {
 			dispatch(setChatLoading(true));
@@ -44,37 +42,35 @@ const MemberAdd = ({ setMemberAddBox }) => {
 				});
 		};
 		getAllUsers();
-	}, []);
+	}, [dispatch]);
 
+	// Filter users based on search input
 	useEffect(() => {
 		setSelectedUsers(
 			users.filter((user) => {
+				const searchTerm = inputUserName.toLowerCase();
 				return (
-					user.firstName
-						.toLowerCase()
-						.includes(inputUserName?.toLowerCase()) ||
-					user.lastName
-						.toLowerCase()
-						.includes(inputUserName?.toLowerCase()) ||
-					user.email
-						.toLowerCase()
-						.includes(inputUserName?.toLowerCase())
+					user.firstName.toLowerCase().includes(searchTerm) ||
+					user.lastName.toLowerCase().includes(searchTerm) ||
+					user.email.toLowerCase().includes(searchTerm)
 				);
 			})
 		);
-	}, [inputUserName]);
+	}, [inputUserName, users]);
+
+	// Handle add user
 	const handleAddUser = (userId, userName) => {
 		if (selectedChat?.users?.find((user) => user?._id === userId)) {
 			toast.warn(`${userName} is already added`);
 			setAddUserId("");
 			setAddUserName("");
-
 			return;
 		}
 		setAddUserId(userId);
 		setAddUserName(userName);
 	};
 
+	// Call API to add user to chat
 	const handleAddUserCall = () => {
 		dispatch(setLoading(true));
 		const token = localStorage.getItem("token");
@@ -91,7 +87,7 @@ const MemberAdd = ({ setMemberAddBox }) => {
 		})
 			.then((res) => res.json())
 			.then((json) => {
-				toast.success(`${addUserName} Added successfully`);
+				toast.success(`${addUserName} added successfully`);
 				setAddUserId("");
 				setAddUserName("");
 				dispatch(addSelectedChat(json?.data));
@@ -100,109 +96,94 @@ const MemberAdd = ({ setMemberAddBox }) => {
 			})
 			.catch((err) => {
 				console.log(err);
-				toast.error(err.message);
+				toast.error("Failed to add user");
 				dispatch(setLoading(false));
 			});
 	};
 
 	return (
-		<div className="p-2">
-			<div className="font-normal text-base w-full text-center mb-2">
-				Total Users ( {users?.length || 0} )
+		<div className="p-4 bg-gray-800 border-t border-gray-700 relative h-full overflow-auto">
+			<div className="font-medium text-lg text-center mb-3">
+				Total Users ({users?.length || 0})
 			</div>
-			<div className="min-h-0.5 w-full bg-slate-900/50 mb-2"></div>
+			<div className="w-full bg-gray-700 mb-3 h-px"></div>
 			<div
 				onClick={() => setMemberAddBox(false)}
-				className="bg-black/15 hover:bg-black/50 h-8 w-8 rounded-md flex items-center justify-center absolute top-4 left-3 cursor-pointer"
+				className="bg-gray-700 hover:bg-gray-600 h-8 w-8 rounded-full flex items-center justify-center absolute top-4 left-3 cursor-pointer"
 			>
-				<FaArrowLeft title="Back" fontSize={14} />
+				<FaArrowLeft title="Back" fontSize={16} />
 			</div>
-			<div className="w-full flex flex-nowrap items-center justify-center gap-2 mb-2">
+			<div className="flex items-center gap-2 mb-3">
 				<input
-					id="search"
 					type="text"
 					placeholder="Search Users..."
-					className="w-2/3 border border-slate-600 py-1 px-2 font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
-					onChange={(e) => setInputUserName(e.target?.value)}
+					className="flex-1 border border-gray-600 py-2 px-3 rounded-md bg-gray-900 text-white outline-none placeholder-gray-400"
+					onChange={(e) => setInputUserName(e.target.value)}
 				/>
-				<label htmlFor="search" className="cursor-pointer">
-					<FaSearch title="Search Users" />
-				</label>
+				<FaSearch title="Search Users" className="text-gray-400" />
 			</div>
-			<div className="flex flex-col items-start w-full justify-center gap-1 mb-3 mt-3">
-				{selectedUsers.length == 0 && isChatLoading ? (
+			<div className="flex flex-col gap-2 mb-3">
+				{selectedUsers.length === 0 && isChatLoading ? (
 					<ChatShimmerSmall />
 				) : (
 					<>
-						{selectedUsers?.length === 0 && (
-							<div className="w-full h-full flex justify-center items-center text-white">
-								<h1 className="text-base font-semibold">
-									No users registered.
-								</h1>
+						{selectedUsers.length === 0 && (
+							<div className="flex justify-center items-center text-white">
+								<h1 className="text-base font-semibold">No users found.</h1>
 							</div>
 						)}
-						{selectedUsers?.map((user) => {
-							return (
-								<div
-									key={user?._id}
-									className="w-full h-12 border-slate-500 border rounded-lg flex justify-start items-center p-2 font-semibold gap-2 hover:bg-black/50 transition-all cursor-pointer text-white"
-								>
-									<img
-										className="h-10 min-w-10 rounded-full"
-										src={user?.image}
-										alt="img"
-									/>
-									<div className="w-full relative">
-										<span className="line-clamp-1 capitalize">
-											{user?.firstName} {user?.lastName}
-										</span>
-									</div>
-									<div
-										title="Add User"
-										className="border border-slate-600 p-2 w-fit font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20 hover:bg-black/50"
-										onClick={() =>
-											handleAddUser(
-												user?._id,
-												user?.firstName
-											)
-										}
-									>
-										<IoPersonAddOutline />
-									</div>
+						{selectedUsers.map((user) => (
+							<div
+								key={user._id}
+								className="flex items-center gap-2 p-2 border border-gray-600 rounded-lg bg-gray-900 hover:bg-gray-700 cursor-pointer"
+							>
+								<img
+									className="h-12 w-12 rounded-full"
+									src={user.image}
+									alt="user"
+								/>
+								<div className="flex-1">
+									<span className="block truncate capitalize text-white">
+										{user.firstName} {user.lastName}
+									</span>
 								</div>
-							);
-						})}
+								<div
+									title="Add User"
+									className="border border-gray-600 p-2 rounded-md cursor-pointer hover:bg-gray-700"
+									onClick={() => handleAddUser(user._id, user.firstName)}
+								>
+									<IoPersonAddOutline fontSize={20} />
+								</div>
+							</div>
+						))}
 					</>
 				)}
 			</div>
 			{addUserName && (
-				<>
-					<div className="w-full min-h-10 p-2"></div>
-					<div className="px-2 w-full fixed bottom-1 right-0">
-						<div className="w-full h-12 border-slate-500 bg-blue-950 border rounded-lg flex justify-between items-center p-2 font-semibold gap-2 transition-all cursor-pointer text-white ">
-							<h1 className="line-clamp-1">
-								Confirm addition of '{addUserName}'?
-							</h1>
-							<div className="flex gap-1">
-								<div
-									onClick={() => {
-										setAddUserName("");
-										setAddUserId("");
-									}}
-									className="border border-slate-600 p-1.5 w-fit font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
-								>
-									<VscError fontSize={19} />
-								</div>
-								<div
-									onClick={() => handleAddUserCall()}
-									className="border border-slate-600 p-1.5 w-fit font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
-								>
-									<IoCheckmarkCircleOutline fontSize={19} />
-								</div>
+				<div className="fixed bottom-0 right-0 w-full p-4">
+					<div className="flex items-center justify-between p-3 bg-blue-800 border border-gray-600 rounded-lg">
+						<h1 className="text-white">
+							Confirm addition of '{addUserName}'?
+						</h1>
+						<div className="flex gap-2">
+							<div
+								onClick={() => {
+									setAddUserName("");
+									setAddUserId("");
+								}}
+								className="border border-gray-600 p-2 rounded-md cursor-pointer hover:bg-gray-700"
+							>
+								<VscError fontSize={20} />
+							</div>
+							<div
+								onClick={handleAddUserCall}
+								className="border border-gray-600 p-2 rounded-md cursor-pointer hover:bg-gray-700"
+							>
+								<IoCheckmarkCircleOutline fontSize={20} />
 							</div>
 						</div>
 					</div>
-				</>
+				</div>
 			)}
 		</div>
 	);

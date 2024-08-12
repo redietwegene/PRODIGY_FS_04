@@ -8,43 +8,32 @@ import {
     SimpleTime,
 } from "../../utils/formateDateTime";
 
-const AllMessages = ({ allMessage }) => {
+const AllMessages = ({ allMessage = [] }) => {
     const chatBox = useRef();
     const adminId = useSelector((store) => store.auth?._id);
     const isTyping = useSelector((store) => store?.condition?.isTyping);
 
-    const [scrollShow, setScrollShow] = useState(true);
-    // Handle Chat Box Scroll Down
+    const [scrollShow, setScrollShow] = useState(false);
+
     const handleScrollDownChat = () => {
         if (chatBox.current) {
             chatBox.current.scrollTo({
                 top: chatBox.current.scrollHeight,
-                // behavior: "auto",
             });
         }
     };
-    // Scroll Button Hidden
+
     useEffect(() => {
         handleScrollDownChat();
-        if (chatBox.current.scrollHeight == chatBox.current.clientHeight) {
-            setScrollShow(false);
-        }
-        const handleScroll = () => {
-            const currentScrollPos = chatBox.current.scrollTop;
-            if (
-                currentScrollPos + chatBox.current.clientHeight <
-                chatBox.current.scrollHeight - 30
-            ) {
-                setScrollShow(true);
-            } else {
-                setScrollShow(false);
-            }
-        };
         const chatBoxCurrent = chatBox.current;
-        chatBoxCurrent.addEventListener("scroll", handleScroll);
-        return () => {
-            chatBoxCurrent.removeEventListener("scroll", handleScroll);
+
+        const handleScroll = () => {
+            const { scrollTop, clientHeight, scrollHeight } = chatBoxCurrent;
+            setScrollShow(scrollTop + clientHeight < scrollHeight - 30);
         };
+
+        chatBoxCurrent.addEventListener("scroll", handleScroll);
+        return () => chatBoxCurrent.removeEventListener("scroll", handleScroll);
     }, [allMessage, isTyping]);
 
     return (
@@ -60,18 +49,17 @@ const AllMessages = ({ allMessage }) => {
             <div
                 className="flex flex-col w-full px-3 gap-1 py-2 overflow-y-auto overflow-hidden scroll-style h-[66vh]"
                 ref={chatBox}
+                aria-live="polite"
             >
-                {allMessage?.map((message, idx) => {
-                    return (
+                {allMessage.length === 0 ? (
+                    <div className="text-white text-center py-4">No messages</div>
+                ) : (
+                    allMessage.map((message, idx) => (
                         <Fragment key={message._id}>
                             <div className="sticky top-0 flex w-full justify-center z-10">
-                                {new Date(
-                                    allMessage[idx - 1]?.updatedAt
-                                ).toDateString() !==
-                                    new Date(
-                                        message?.updatedAt
-                                    ).toDateString() && (
-                                    <span className="text-xs font-light mb-2 mt-1 text-white/50 bg-black h-7 w-fit px-5 rounded-md flex items-center justify-center cursor-pointer">
+                                {new Date(allMessage[idx - 1]?.updatedAt).toDateString() !==
+                                    new Date(message?.updatedAt).toDateString() && (
+                                    <span className="text-xs font-light mb-2 mt-1 text-white/50 bg-black h-7 w-fit px-5 rounded-md flex items-center justify-center">
                                         {SimpleDateMonthDay(message?.updatedAt)}
                                     </span>
                                 )}
@@ -85,11 +73,10 @@ const AllMessages = ({ allMessage }) => {
                             >
                                 {message?.chat?.isGroupChat &&
                                     message?.sender?._id !== adminId &&
-                                    (allMessage[idx + 1]?.sender?._id !==
-                                    message?.sender?._id ? (
+                                    (allMessage[idx + 1]?.sender?._id !== message?.sender?._id ? (
                                         <img
                                             src={message?.sender?.image}
-                                            alt=""
+                                            alt={`${message?.sender?.firstName}'s avatar`}
                                             className="h-9 w-9 rounded-full"
                                         />
                                     ) : (
@@ -110,35 +97,25 @@ const AllMessages = ({ allMessage }) => {
                                         )}
                                     <div
                                         className={`mt-1 pb-1.5 ${
-                                            message?.sender?._id == adminId
-                                                ? "pr-16"
-                                                : "pr-12"
+                                            message?.sender?._id === adminId ? "pr-16" : "pr-12"
                                         }`}
                                     >
-                                        <span className="">
-                                            {message?.message}
-                                        </span>
+                                        <span>{message?.message}</span>
                                         <span
                                             className="text-[11px] font-light absolute bottom-1 right-2 flex items-end gap-1.5"
-                                            title={SimpleDateAndTime(
-                                                message?.updatedAt
-                                            )}
+                                            title={SimpleDateAndTime(message?.updatedAt)}
                                         >
                                             {SimpleTime(message?.updatedAt)}
-                                            {message?.sender?._id ===
-                                                adminId && (
-                                                <VscCheckAll
-                                                    color="white"
-                                                    fontSize={14}
-                                                />
+                                            {message?.sender?._id === adminId && (
+                                                <VscCheckAll color="white" fontSize={14} />
                                             )}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </Fragment>
-                    );
-                })}
+                    ))
+                )}
                 {isTyping && (
                     <div id="typing-animation">
                         <span></span>

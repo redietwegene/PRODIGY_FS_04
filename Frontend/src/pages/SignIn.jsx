@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { addAuth } from "../redux/slices/authSlice";
 import { checkValidSignInFrom } from "../utils/validate";
-import { PiEye, PiEyeClosedLight } from "react-icons/pi";
+import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
@@ -66,8 +66,8 @@ const SignIn = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="w-full max-w-sm p-8 bg-white rounded shadow-lg">
+        <div className="flex items-center justify-center min-h-screen ">
+            <div className="w-full max-w-sm p-8 rounded shadow-lg">
                 <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
                     SignIn ChatApp
                 </h2>
@@ -94,10 +94,10 @@ const SignIn = () => {
                         />
                         <button
                             type="button"
-                            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
+                            className="absolute right-4 top-1/2 transform  text-gray-500"
                             onClick={() => setIsShow(!isShow)}
                         >
-                            {isShow ? <PiEyeClosedLight size={22} /> : <PiEye size={22} />}
+                            {isShow ? < MdVisibility/> : <MdVisibilityOff  />}
                         </button>
                     </div>
 

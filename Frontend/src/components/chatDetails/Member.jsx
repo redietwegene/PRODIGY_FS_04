@@ -8,9 +8,9 @@ const Member = () => {
 	const [memberAddBox, setMemberAddBox] = useState(false);
 
 	return (
-		<div className="flex flex-col pt-2 gap-2 text-white relative h-full z-10 overflow-auto scroll-style">
-			<div className="font-semibold text-lg w-full text-center mt-2">
-				Members ( {selectedChat?.users?.length} )
+		<div className="flex flex-col p-4 gap-4 text-white bg-gray-800 border-t border-gray-700 relative h-full overflow-auto">
+			<div className="font-semibold text-xl text-center mb-4">
+				Members ({selectedChat?.users?.length})
 			</div>
 			{memberAddBox ? (
 				<MemberAdd setMemberAddBox={setMemberAddBox} />

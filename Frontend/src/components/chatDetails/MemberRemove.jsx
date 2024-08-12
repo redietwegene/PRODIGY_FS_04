@@ -47,110 +47,94 @@ const MemberRemove = ({ setMemberAddBox }) => {
 			})
 			.catch((err) => {
 				console.log(err);
-				toast.error(err.message);
+				toast.error("Failed to remove user");
 				dispatch(setLoading(false));
 			});
 	};
 
 	return (
-		<div className="p-2">
+		<div className="p-4 bg-gray-800 border-t border-gray-700 relative h-full overflow-auto">
 			{selectedChat?.groupAdmin?._id === authUserId && (
 				<div
-					className="w-full my-2 h-12 border-slate-500 border rounded-lg flex justify-start items-center p-2 font-semibold gap-2 hover:bg-black/50 transition-all cursor-pointer text-white"
+					className="flex items-center gap-2 p-2 border border-gray-600 rounded-lg bg-gray-900 hover:bg-gray-700 cursor-pointer transition-all"
 					onClick={() => setMemberAddBox(true)}
 				>
-					<div className="h-10 min-w-10 rounded-full flex items-center justify-center border border-white/80">
-						<IoPersonAddOutline fontSize={18} />
+					<div className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-400">
+						<IoPersonAddOutline className="text-white" fontSize={18} />
 					</div>
-					<span className="w-full line-clamp-1 capitalize">
-						Add members
-					</span>
+					<span className="text-white">Add members</span>
 				</div>
 			)}
-			<div className="min-h-0.5 w-full bg-slate-900/50"></div>
-			<div className="flex flex-col items-start w-full justify-center gap-1 mb-3 mt-3">
-				{selectedChat?.users?.map((user) => {
-					return (
-						<div
-							key={user?._id}
-							className="w-full h-12 border-slate-500 border rounded-lg flex justify-start items-center p-2 font-semibold gap-2 transition-all cursor-pointer text-white"
-						>
-							<img
-								className="h-10 min-w-10 rounded-full"
-								src={user?.image}
-								alt="img"
-							/>
-							<div className="w-full relative">
-								<span className="line-clamp-1 capitalize">
-									{user?.firstName} {user?.lastName}
-								</span>
-								{user?._id ===
-									selectedChat?.groupAdmin?._id && (
-									<span className="font-light text-xs text-blue-200">
-										Admin
-									</span>
-								)}
-							</div>
-							{user?._id !== selectedChat?.groupAdmin?._id && (
-								<>
-									{selectedChat?.groupAdmin?._id ===
-									authUserId ? (
-										<div
-											title="Remove User"
-											className="border border-slate-600 p-2 w-fit font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20 hover:bg-black/50"
-											onClick={() =>
-												handleRemoveUser(
-													user?._id,
-													user?.firstName
-												)
-											}
-										>
-											<IoPersonRemoveOutline />
-										</div>
-									) : (
-										<CiCircleInfo
-											onClick={() =>
-												toast.warn("You're not admin")
-											}
-											fontSize={25}
-											title="Not Allowed"
-											className="cursor-pointer"
-										/>
-									)}
-								</>
+			<div className="w-full bg-gray-700 h-px my-2"></div>
+			<div className="flex flex-col gap-2">
+				{selectedChat?.users?.map((user) => (
+					<div
+						key={user._id}
+						className="flex items-center gap-2 p-2 border border-gray-600 rounded-lg bg-gray-900 hover:bg-gray-700 cursor-pointer transition-all"
+					>
+						<img
+							className="h-10 w-10 rounded-full"
+							src={user?.image}
+							alt="user"
+						/>
+						<div className="flex-1">
+							<span className="text-white capitalize">
+								{user?.firstName} {user?.lastName}
+							</span>
+							{user?._id === selectedChat?.groupAdmin?._id && (
+								<span className="text-blue-300 text-xs">Admin</span>
 							)}
 						</div>
-					);
-				})}
+						{user?._id !== selectedChat?.groupAdmin?._id && (
+							<>
+								{selectedChat?.groupAdmin?._id === authUserId ? (
+									<div
+										title="Remove User"
+										className="p-2 border border-gray-600 rounded-md cursor-pointer hover:bg-gray-700 transition-all"
+										onClick={() =>
+											handleRemoveUser(user._id, user.firstName)
+										}
+									>
+										<IoPersonRemoveOutline className="text-white" />
+									</div>
+								) : (
+									<CiCircleInfo
+										onClick={() =>
+											toast.warn("You're not admin")
+										}
+										fontSize={25}
+										className="text-white cursor-pointer"
+										title="Not Allowed"
+									/>
+								)}
+							</>
+						)}
+					</div>
+				))}
 			</div>
 			{removeUserName && (
-				<>
-					<div className="w-full min-h-10 p-2"></div>
-					<div className="px-2 w-full fixed bottom-1 right-0">
-						<div className="w-full h-12 border-slate-500 bg-blue-950 border rounded-lg flex justify-between items-center p-2 font-semibold gap-2 transition-all cursor-pointer text-white ">
-							<h1 className="line-clamp-1">
-								Confirm removal of '{removeUserName}'?
-							</h1>
-							<div className="flex gap-1">
-								<div
-									onClick={() => {
-										setRemoveUserName("");
-										setRemoveUserId("");
-									}}
-									className="border border-slate-600 p-1.5 w-fit font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
-								>
-									<VscError fontSize={19} />
-								</div>
-								<div
-									onClick={() => handleRemoveUserCall()}
-									className="border border-slate-600 p-1.5 w-fit font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
-								>
-									<IoCheckmarkCircleOutline fontSize={19} />
-								</div>
+				<div className="fixed bottom-1 right-0 w-full p-4 bg-gray-900 border-t border-gray-700">
+					<div className="flex items-center justify-between p-3 bg-blue-800 border border-gray-600 rounded-lg">
+						<h1 className="text-white">Confirm removal of '{removeUserName}'?</h1>
+						<div className="flex gap-2">
+							<div
+								onClick={() => {
+									setRemoveUserName("");
+									setRemoveUserId("");
+								}}
+								className="p-2 border border-gray-600 rounded-md cursor-pointer hover:bg-gray-700 transition-all"
+							>
+								<VscError className="text-white" fontSize={19} />
+							</div>
+							<div
+								onClick={handleRemoveUserCall}
+								className="p-2 border border-gray-600 rounded-md cursor-pointer hover:bg-gray-700 transition-all"
+							>
+								<IoCheckmarkCircleOutline className="text-white" fontSize={19} />
 							</div>
 						</div>
 					</div>
-				</>
+				</div>
 			)}
 		</div>
 	);

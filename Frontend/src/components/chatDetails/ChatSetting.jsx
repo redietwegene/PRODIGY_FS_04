@@ -17,6 +17,7 @@ const ChatSetting = () => {
 	const authUserId = useSelector((store) => store?.auth?._id);
 	const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
 	const [isConfirm, setConfirm] = useState("");
+
 	const handleClearChat = () => {
 		if (
 			authUserId === selectedChat?.groupAdmin?._id ||
@@ -27,6 +28,7 @@ const ChatSetting = () => {
 			toast.warn("You're not admin");
 		}
 	};
+
 	const handleDeleteGroup = () => {
 		if (authUserId === selectedChat?.groupAdmin?._id) {
 			setConfirm("delete-group");
@@ -34,13 +36,13 @@ const ChatSetting = () => {
 			toast.warn("You're not admin");
 		}
 	};
+
 	const handleDeleteChat = () => {
 		if (!selectedChat?.isGroupChat) {
 			setConfirm("delete-chat");
 		}
 	};
 
-	//  handle Clear Chat Call
 	const handleClearChatCall = () => {
 		dispatch(setLoading(true));
 		const token = localStorage.getItem("token");
@@ -75,7 +77,7 @@ const ChatSetting = () => {
 				toast.error("Failed to clear chat");
 			});
 	};
-	// handle Delete Chat Call
+
 	const handleDeleteChatCall = () => {
 		dispatch(setLoading(true));
 		const token = localStorage.getItem("token");
@@ -114,58 +116,56 @@ const ChatSetting = () => {
 	};
 
 	return (
-		<div className="flex flex-col p-2 gap-2 text-white relative h-full z-10 overflow-auto scroll-style">
-			<h1 className="font-semibold text-lg w-full text-center my-2">
-				Setting
-			</h1>
+		<div className="flex flex-col p-4 gap-4 text-white bg-gray-800 border-t border-gray-700 relative h-full overflow-auto">
+			<h1 className="text-xl font-semibold text-center mb-4">Settings</h1>
 			<div
 				onClick={handleClearChat}
-				className="w-full h-8 border-slate-500 border text-sm rounded-lg flex justify-between items-center p-2 font-normal gap-2 transition-all cursor-pointer text-white"
+				className="w-full h-12 border border-gray-600 text-sm rounded-lg flex justify-between items-center p-3 font-medium gap-3 transition-all cursor-pointer hover:bg-gray-700"
 			>
 				<h1>Clear Chat</h1>
 				<CiCircleInfo
-					fontSize={15}
+					fontSize={18}
 					title={
 						selectedChat?.isGroupChat
 							? "Admin access only"
 							: "Clear Chat"
 					}
-					className="cursor-pointer"
+					className="text-gray-400"
 				/>
 			</div>
 			{selectedChat?.isGroupChat ? (
 				<div
 					onClick={handleDeleteGroup}
-					className="w-full h-8 border-slate-500 border text-sm rounded-lg flex justify-between items-center p-2 font-normal gap-2 transition-all cursor-pointer text-white"
+					className="w-full h-12 border border-gray-600 text-sm rounded-lg flex justify-between items-center p-3 font-medium gap-3 transition-all cursor-pointer hover:bg-gray-700"
 				>
 					<h1>Delete Group</h1>
 					<CiCircleInfo
-						fontSize={15}
+						fontSize={18}
 						title="Admin access only"
-						className="cursor-pointer"
+						className="text-gray-400"
 					/>
 				</div>
 			) : (
 				<div
 					onClick={handleDeleteChat}
-					className="w-full h-8 border-slate-500 border text-sm rounded-lg flex justify-between items-center p-2 font-normal gap-2 transition-all cursor-pointer text-white"
+					className="w-full h-12 border border-gray-600 text-sm rounded-lg flex justify-between items-center p-3 font-medium gap-3 transition-all cursor-pointer hover:bg-gray-700"
 				>
 					<h1>Delete Chat</h1>
 					<CiCircleInfo
-						fontSize={15}
+						fontSize={18}
 						title="Delete Chat"
-						className="cursor-pointer"
+						className="text-gray-400"
 					/>
 				</div>
 			)}
 			{isConfirm && (
-				<div className="px-2 w-full fixed bottom-1 right-0">
+				<div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-md">
 					<div
-						className={`w-full h-12 border-slate-500 ${
+						className={`w-full h-14 border border-gray-600 ${
 							isConfirm === "clear-chat"
-								? "bg-blue-950"
-								: "bg-red-950"
-						}  border rounded-lg flex justify-between items-center p-2 font-semibold gap-2 transition-all cursor-pointer text-white `}
+								? "bg-blue-900"
+								: "bg-red-900"
+						} rounded-lg flex justify-between items-center p-4 font-medium gap-3 text-white`}
 					>
 						<h1>
 							{isConfirm === "clear-chat"
@@ -174,14 +174,12 @@ const ChatSetting = () => {
 								? "Delete group confirmation?"
 								: "Delete chat confirmation"}
 						</h1>
-						<div className="flex gap-1">
+						<div className="flex gap-2">
 							<div
-								onClick={() => {
-									setConfirm("");
-								}}
-								className="border border-slate-600 p-1.5 w-fit font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
+								onClick={() => setConfirm("")}
+								className="border border-gray-600 p-2 rounded-md cursor-pointer hover:bg-gray-700"
 							>
-								<VscError fontSize={19} />
+								<VscError fontSize={20} />
 							</div>
 							<div
 								onClick={
@@ -189,9 +187,9 @@ const ChatSetting = () => {
 										? handleClearChatCall
 										: handleDeleteChatCall
 								}
-								className="border border-slate-600 p-1.5 w-fit font-normal outline-none rounded-md cursor-pointer bg-transparent active:bg-black/20"
+								className="border border-gray-600 p-2 rounded-md cursor-pointer hover:bg-gray-700"
 							>
-								<IoCheckmarkCircleOutline fontSize={19} />
+								<IoCheckmarkCircleOutline fontSize={20} />
 							</div>
 						</div>
 					</div>

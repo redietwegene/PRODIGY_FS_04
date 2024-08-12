@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import {
-	setChatDetailsBox,
-	setMessageLoading,
-} from "../../redux/slices/conditionSlice";
+import { setChatDetailsBox, setMessageLoading } from "../../redux/slices/conditionSlice";
 import { useDispatch, useSelector } from "react-redux";
 import AllMessages from "./AllMessages";
 import MessageSend from "./MessageSend";
@@ -20,48 +17,39 @@ const MessageBox = ({ chatId }) => {
 	const dispatch = useDispatch();
 	const chatDetailsBox = useRef(null);
 	const [isExiting, setIsExiting] = useState(false);
-	const isChatDetailsBox = useSelector(
-		(store) => store?.condition?.isChatDetailsBox
-	);
-	const isMessageLoading = useSelector(
-		(store) => store?.condition?.isMessageLoading
-	);
+	const isChatDetailsBox = useSelector((store) => store?.condition?.isChatDetailsBox);
+	const isMessageLoading = useSelector((store) => store?.condition?.isMessageLoading);
 	const allMessage = useSelector((store) => store?.message?.message);
 	const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
 	const authUserId = useSelector((store) => store?.auth?._id);
 
 	useEffect(() => {
-		const getMessage = (chatId) => {
-			dispatch(setMessageLoading(true));
-			const token = localStorage.getItem("token");
-			fetch(`${import.meta.env.VITE_BACKEND_URL}/api/message/${chatId}`, {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
-			})
-				.then((res) => res.json())
-				.then((json) => {
-					dispatch(addAllMessages(json?.data || []));
-					dispatch(setMessageLoading(false));
-					socket.emit("join chat", selectedChat._id);
-				})
-				.catch((err) => {
-					console.log(err);
-					dispatch(setMessageLoading(false));
-					toast.error("Message Loading Failed");
+		const fetchMessages = async (chatId) => {
+			try {
+				dispatch(setMessageLoading(true));
+				const token = localStorage.getItem("token");
+				const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/message/${chatId}`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
 				});
+				const data = await response.json();
+				dispatch(addAllMessages(data?.data || []));
+				socket.emit("join chat", selectedChat._id);
+			} catch (error) {
+				console.error("Error loading messages:", error);
+				toast.error("Message Loading Failed");
+			} finally {
+				dispatch(setMessageLoading(false));
+			}
 		};
-		getMessage(chatId);
-	}, [chatId]);
+		fetchMessages(chatId);
+	}, [chatId, dispatch, selectedChat._id]);
 
-	// chatDetailsBox outside click handler
 	const handleClickOutside = (event) => {
-		if (
-			chatDetailsBox.current &&
-			!chatDetailsBox.current.contains(event.target)
-		) {
+		if (chatDetailsBox.current && !chatDetailsBox.current.contains(event.target)) {
 			setIsExiting(true);
 			setTimeout(() => {
 				dispatch(setChatDetailsBox(false));
@@ -70,17 +58,15 @@ const MessageBox = ({ chatId }) => {
 		}
 	};
 
-	// add && remove events according to isChatDetailsBox
 	useEffect(() => {
 		if (isChatDetailsBox) {
 			document.addEventListener("mousedown", handleClickOutside);
 		} else {
 			document.removeEventListener("mousedown", handleClickOutside);
 		}
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
+		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [isChatDetailsBox]);
+
 	return (
 		<>
 			<div
@@ -99,7 +85,7 @@ const MessageBox = ({ chatId }) => {
 					</div>
 					<img
 						src={getChatImage(selectedChat, authUserId)}
-						alt=""
+						alt={`${getChatName(selectedChat, authUserId)}'s avatar`}
 						className="h-9 w-9 rounded-full"
 					/>
 					<h1 className="line-clamp-1">
