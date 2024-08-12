@@ -1,106 +1,157 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
-import axios from "axios"
-const SignUp = () => {
-    const navigateTo = useNavigate();
+import { toast } from "react-toastify";
+import { checkValidSignUpFrom } from "../utils/validate";
+import { PiEye, PiEyeClosedLight } from "react-icons/pi";
 
-    const [name, setUsername] = useState("");
+const SignUp = () => {
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [pic, setPic] = useState();
-    const [showPassword, setShowPassword] = useState(false);
+    const [load, setLoad] = useState("");
+    const [isShow, setIsShow] = useState(false);
+    const navigate = useNavigate();
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+    const signUpUser = (e) => {
+        // Signup ---
+        toast.loading("Wait until you SignUp");
+        e.target.disabled = true;
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password,
+            }),
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                setLoad("");
+                e.target.disabled = false;
+                toast.dismiss();
+                if (json.token) {
+                    navigate("/signin");
+                    toast.success(json?.message);
+                } else {
+                    toast.error(json?.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                setLoad("");
+                toast.dismiss();
+                toast.error("Error : " + error.code);
+                e.target.disabled = false;
+            });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append("pic",pic)
-        formData.append("name",name)
-        formData.append("email",email)
-        formData.append("password",password)
-        try {
-          const response = await axios.post("http://localhost:3000/signup",formData);
-          if(response.status==200){
-          setUsername('');
-          setEmail('');
-          setPassword('');
-          setPic(null)
-          navigateTo("/");
-          }
-         
-        } catch (error) {
-            console.log(error);
+    const handleSignup = (e) => {
+        if (firstName && lastName && email && password) {
+            const validError = checkValidSignUpFrom(
+                firstName,
+                lastName,
+                email,
+                password
+            );
+            if (validError) {
+                toast.error(validError);
+                return;
+            }
+            setLoad("Loading...");
+            signUpUser(e);
+        } else {
+            toast.error("Required: All Fields");
         }
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-blue-400">
-            <div className="w-full max-w-sm p-8 bg-white rounded shadow-lg">
-                <h2 className="mb-6 text-2xl font-semibold text-center text-gray-700">SignUp</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="text-gray-600 font-medium text-sm block mb-3">Username</label>
-                        <input 
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+                <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
+                    SignUp ChatApp
+                </h2>
+                <form className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">First Name</label>
+                        <input
+                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-600"
                             type="text"
-                            className="border w-full p-2 mb-3 rounded-lg focus:outline-none focus:border-lime-600"
-                            placeholder="Enter your name"
-                            value={name}
-                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Enter First Name"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            required
                         />
-                        <label className="text-gray-600 font-medium text-sm block mb-3">Email</label>
-                        <input 
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">Last Name</label>
+                        <input
+                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-600"
                             type="text"
-                            name="email"
-                            className="border w-full p-2 mb-3 rounded-lg focus:outline-none focus:border-lime-600"
-                            placeholder="Enter your email address"
+                            placeholder="Enter Last Name"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">Email Address</label>
+                        <input
+                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-600"
+                            type="email"
+                            placeholder="Enter Email Address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
-                        <div className="mb-6">
-                            <label className="block mb-3 text-sm font-medium text-gray-600">Password</label>
-                            <div className="relative">
-                                <input
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    className="w-full py-2 pl-2 pr-10 border rounded-lg focus:outline-none focus:border-lime-600"
-                                    placeholder="Enter password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                               
-                                <button
-                                    type="button"
-                                    className="absolute top-1/4 transform -translate-y-5 right-3 text-gray-500"
-                                    onClick={togglePasswordVisibility}
-                                >
-                                    {showPassword ? <MdVisibility /> : <MdVisibilityOff />}
-                                </button>
-                                 <div>
-                     <label htmlFor="pic" className = "block mb-3 text-sm font-medium text-gray-600">Picture </label>
-                         <input type="file" onChange={(e) => setPic(e.target.files[0])} name="pic" id="pic" accept="image/*" />
-                       
                     </div>
-                            </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">Password</label>
+                        <div className="relative">
+                            <input
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-600"
+                                type={isShow ? "text" : "password"}
+                                placeholder="Enter Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                                onClick={() => setIsShow(!isShow)}
+                            >
+                                {isShow ? <PiEyeClosedLight size={22} /> : <PiEye size={22} />}
+                            </button>
                         </div>
                     </div>
-                    <div className='flex justify-center'>
-                        <button type="submit" className="flex justify-center w-64 py-2 mb-3 text-white bg-green-800 rounded-lg hover:bg-green-700">Sign up</button>
+
+                    <div className="flex justify-center">
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleSignup(e);
+                            }}
+                            className="w-full py-2 bg-green-800 text-white rounded-lg hover:bg-green-700"
+                            disabled={load !== ""}
+                        >
+                            {load === "" ? "Sign Up" : load}
+                        </button>
                     </div>
-                   
-                    
-                    
+
+                    <div className="text-center mt-4">
+                        <p className="text-gray-600">Already have an account?</p>
+                        <Link to="/signin" className="text-green-800 font-semibold hover:underline">
+                            Sign In
+                        </Link>
+                    </div>
                 </form>
-                <div className="flex justify-center">
-                    <p>Already have an account?</p>
-                    <h5 className="text-green-800 font-medium">
-                        <Link to="/login">Login</Link>
-                    </h5>
-                </div>
             </div>
         </div>
     );

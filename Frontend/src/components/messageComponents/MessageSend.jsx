@@ -60,7 +60,7 @@ const MessageSend = ({ chatId }) => {
 			socket.emit("stop typing", selectedChat._id);
 			dispatch(setSendLoading(true));
 			const token = localStorage.getItem("token");
-			fetch(`${import.meta.env.VITE_BACKEND_URL}/message`, {
+			fetch(`${import.meta.env.VITE_BACKEND_URL}/api/message`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

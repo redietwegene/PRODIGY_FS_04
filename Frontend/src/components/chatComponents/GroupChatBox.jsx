@@ -32,7 +32,7 @@ const GroupChatBox = () => {
 		const getAllUsers = () => {
 			dispatch(setChatLoading(true));
 			const token = localStorage.getItem("token");
-			fetch(`${import.meta.env.VITE_BACKEND_URL}/user/users`, {
+			fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/users`, {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
@@ -104,7 +104,7 @@ const GroupChatBox = () => {
 		dispatch(setGroupChatBox());
 		dispatch(setLoading(true));
 		const token = localStorage.getItem("token");
-		fetch(`${import.meta.env.VITE_BACKEND_URL}/chat/group`, {
+		fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/group`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

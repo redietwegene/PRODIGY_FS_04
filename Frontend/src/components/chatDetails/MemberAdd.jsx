@@ -25,7 +25,7 @@ const MemberAdd = ({ setMemberAddBox }) => {
 		const getAllUsers = () => {
 			dispatch(setChatLoading(true));
 			const token = localStorage.getItem("token");
-			fetch(`${import.meta.env.VITE_BACKEND_URL}/user/users`, {
+			fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/users`, {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
@@ -78,7 +78,7 @@ const MemberAdd = ({ setMemberAddBox }) => {
 	const handleAddUserCall = () => {
 		dispatch(setLoading(true));
 		const token = localStorage.getItem("token");
-		fetch(`${import.meta.env.VITE_BACKEND_URL}/chat/groupadd`, {
+		fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/groupadd`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

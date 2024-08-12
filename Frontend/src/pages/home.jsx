@@ -6,127 +6,132 @@ import MyChat from "../components/chatComponents/MyChat";
 import MessageBox from "../components/messageComponents/MessageBox";
 import ChatNotSelected from "../components/chatComponents/ChatNotSelected";
 import {
-	setChatDetailsBox,
-	setSocketConnected,
-	setUserSearchBox,
+    setChatDetailsBox,
+    setSocketConnected,
+    setUserSearchBox,
 } from "../redux/slices/conditionSlice";
 import socket from "../socket/socket";
 import { addAllMessages, addNewMessage } from "../redux/slices/messageSlice";
 import {
-	addNewChat,
-	addNewMessageRecieved,
-	deleteSelectedChat,
+    addNewChat,
+    addNewMessageRecieved,
+    deleteSelectedChat,
 } from "../redux/slices/myChatSlice";
 import { toast } from "react-toastify";
 import { receivedSound } from "../utils/notificationSound";
+
 let selectedChatCompare;
 
 const Home = () => {
-	const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
-	const dispatch = useDispatch();
-	const isUserSearchBox = useSelector(
-		(store) => store?.condition?.isUserSearchBox
-	);
-	const authUserId = useSelector((store) => store?.auth?._id);
+    const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
+    const dispatch = useDispatch();
+    const isUserSearchBox = useSelector(
+        (store) => store?.condition?.isUserSearchBox
+    );
+    const authUserId = useSelector((store) => store?.auth?._id);
 
-	// socket connection
-	useEffect(() => {
-		if (!authUserId) return;
-		socket.emit("setup", authUserId);
-		socket.on("connected", () => dispatch(setSocketConnected(true)));
-	}, [authUserId]);
+    // socket connection
+    useEffect(() => {
+        if (!authUserId) return;
+        socket.emit("setup", authUserId);
+        socket.on("connected", () => dispatch(setSocketConnected(true)));
+    }, [authUserId]);
 
-	// socket message received
-	useEffect(() => {
-		selectedChatCompare = selectedChat;
-		const messageHandler = (newMessageReceived) => {
-			if (
-				selectedChatCompare &&
-				selectedChatCompare._id === newMessageReceived.chat._id
-			) {
-				dispatch(addNewMessage(newMessageReceived));
-			} else {
-				receivedSound();
-				dispatch(addNewMessageRecieved(newMessageReceived));
-			}
-		};
-		socket.on("message received", messageHandler);
+    // socket message received
+    useEffect(() => {
+        selectedChatCompare = selectedChat;
+        const messageHandler = (newMessageReceived) => {
+            if (
+                selectedChatCompare &&
+                selectedChatCompare._id === newMessageReceived.chat._id
+            ) {
+                dispatch(addNewMessage(newMessageReceived));
+            } else {
+                receivedSound();
+                dispatch(addNewMessageRecieved(newMessageReceived));
+            }
+        };
+        socket.on("message received", messageHandler);
 
-		return () => {
-			socket.off("message received", messageHandler);
-		};
-	});
+        return () => {
+            socket.off("message received", messageHandler);
+        };
+    }, [selectedChat, dispatch]);
 
-	// socket clear chat messages
-	useEffect(() => {
-		const clearChatHandler = (chatId) => {
-			if (chatId === selectedChat?._id) {
-				dispatch(addAllMessages([]));
-				toast.success("Cleared all messages");
-			}
-		};
-		socket.on("clear chat", clearChatHandler);
-		return () => {
-			socket.off("clear chat", clearChatHandler);
-		};
-	});
-	// socket delete chat messages
-	useEffect(() => {
-		const deleteChatHandler = (chatId) => {
-			dispatch(setChatDetailsBox(false));
-			if (selectedChat && chatId === selectedChat._id) {
-				dispatch(addAllMessages([]));
-			}
-			dispatch(deleteSelectedChat(chatId));
-			toast.success("Chat deleted successfully");
-		};
-		socket.on("delete chat", deleteChatHandler);
-		return () => {
-			socket.off("delete chat", deleteChatHandler);
-		};
-	});
+    // socket clear chat messages
+    useEffect(() => {
+        const clearChatHandler = (chatId) => {
+            if (chatId === selectedChat?._id) {
+                dispatch(addAllMessages([]));
+                toast.success("Cleared all messages");
+            }
+        };
+        socket.on("clear chat", clearChatHandler);
+        return () => {
+            socket.off("clear chat", clearChatHandler);
+        };
+    }, [selectedChat, dispatch]);
 
-	// socket chat created
-	useEffect(() => {
-		const chatCreatedHandler = (chat) => {
-			dispatch(addNewChat(chat));
-			toast.success("Created & Selected chat");
-		};
-		socket.on("chat created", chatCreatedHandler);
-		return () => {
-			socket.off("chat created", chatCreatedHandler);
-		};
-	});
+    // socket delete chat messages
+    useEffect(() => {
+        const deleteChatHandler = (chatId) => {
+            dispatch(setChatDetailsBox(false));
+            if (selectedChat && chatId === selectedChat._id) {
+                dispatch(addAllMessages([]));
+            }
+            dispatch(deleteSelectedChat(chatId));
+            toast.success("Chat deleted successfully");
+        };
+        socket.on("delete chat", deleteChatHandler);
+        return () => {
+            socket.off("delete chat", deleteChatHandler);
+        };
+    }, [selectedChat, dispatch]);
 
-	return (
-		<div className="flex w-full border-slate-500 border rounded-sm shadow-md shadow-black relative">
-			<div
-				className={`${
-					selectedChat && "hidden"
-				} sm:block sm:w-[40%] w-full h-[80vh] bg-black/40 border-r border-slate-500 relative`}
-			>
-				<div className="absolute bottom-3 right-6 cursor-pointer text-white">
-					<MdChat
-						title="New Chat"
-						fontSize={32}
-						onClick={() => dispatch(setUserSearchBox())}
-					/>
-				</div>
-				{isUserSearchBox ? <UserSearch /> : <MyChat />}
-			</div>
-			<div
-				className={`${
-					!selectedChat && "hidden"
-				} sm:block sm:w-[60%] w-full h-[80vh] bg-black/40 relative overflow-hidden`}
-			>
-				{selectedChat ? (
-					<MessageBox chatId={selectedChat?._id} />
-				) : (
-					<ChatNotSelected />
-				)}
-			</div>
-		</div>
-	);
+    // socket chat created
+    useEffect(() => {
+        const chatCreatedHandler = (chat) => {
+            dispatch(addNewChat(chat));
+            toast.success("Created & Selected chat");
+        };
+        socket.on("chat created", chatCreatedHandler);
+        return () => {
+            socket.off("chat created", chatCreatedHandler);
+        };
+    }, [dispatch]);
+
+    return (
+        <div className="flex w-full border border-gray-300 rounded-lg shadow-md overflow-hidden">
+            {/* User Search / My Chats */}
+            <div
+                className={`${
+                    selectedChat ? "hidden" : "block"
+                } sm:w-1/3 w-full h-[80vh] bg-green-100 border-r border-gray-300 relative`}
+            >
+                <div className="absolute bottom-4 right-4 cursor-pointer text-gray-700 hover:text-gray-900">
+                    <MdChat
+                        title="New Chat"
+                        fontSize={32}
+                        onClick={() => dispatch(setUserSearchBox())}
+                    />
+                </div>
+                {isUserSearchBox ? <UserSearch /> : <MyChat />}
+            </div>
+
+            {/* Message Box */}
+            <div
+                className={`${
+                    !selectedChat ? "hidden" : "block"
+                } sm:w-2/3 w-full h-[80vh] bg-blue-100 relative overflow-hidden`}
+            >
+                {selectedChat ? (
+                    <MessageBox chatId={selectedChat?._id} />
+                ) : (
+                    <ChatNotSelected />
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default Home;

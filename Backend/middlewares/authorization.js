@@ -1,6 +1,6 @@
-import wrapAsync from "./wrapAsync.js";
-import { getUserIdFromToken } from "../config.js";
-import { User } from "../model/userModel.js";
+const { getUserIdFromToken } = require("../config/jwtProvider");
+const User = require("../models/user");
+const wrapAsync = require("./wrapAsync");
 
 const authorization = wrapAsync(async (req, res, next) => {
 	const token = req.headers.authorization?.split(" ")[1];
@@ -13,4 +13,5 @@ const authorization = wrapAsync(async (req, res, next) => {
 	}
 	next();
 });
-export { authorization };
+
+module.exports = { authorization };

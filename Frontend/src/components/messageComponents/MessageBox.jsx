@@ -34,7 +34,7 @@ const MessageBox = ({ chatId }) => {
 		const getMessage = (chatId) => {
 			dispatch(setMessageLoading(true));
 			const token = localStorage.getItem("token");
-			fetch(`${import.meta.env.VITE_BACKEND_URL}/message/${chatId}`, {
+			fetch(`${import.meta.env.VITE_BACKEND_URL}/api/message/${chatId}`, {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",

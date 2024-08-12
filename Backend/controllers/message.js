@@ -1,5 +1,5 @@
-import { Chat } from "../model/chatModel.js"
-import { Message } from "../model/messageModel.js";
+const Chat = require("../models/chat");
+const Message = require("../models/message");
 
 const createMessage = async (req, res) => {
 	const { message, chatId } = req.body;
@@ -36,4 +36,5 @@ const clearChat = async (req, res) => {
 	await Message.deleteMany({ chat: chatId });
 	return res.status(200).json({ message: "success" });
 };
-export { createMessage, allMessage, clearChat };
+
+module.exports = { createMessage, allMessage, clearChat };

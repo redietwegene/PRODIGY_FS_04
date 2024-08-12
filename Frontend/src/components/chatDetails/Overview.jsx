@@ -33,7 +33,7 @@ const Overview = () => {
 		}
 		dispatch(setLoading(true));
 		const token = localStorage.getItem("token");
-		fetch(`${import.meta.env.VITE_BACKEND_URL}/chat/rename`, {
+		fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/rename`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

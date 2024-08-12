@@ -1,5 +1,5 @@
-import { Chat } from "../model/chatModel.js"
-import { Message } from "../model/messageModel.js";
+const Chat = require("../models/chat");
+const Message = require("../models/message");
 
 const postChat = async (req, res) => {
 	const { userId } = req.body;
@@ -144,8 +144,12 @@ const addToGroup = async (req, res) => {
 	}
 };
 
-export {
-    postChat, getChat, createGroup,
-    deleteGroup, renameGroup,
-    removeFromGroup,addToGroup,
-}
+module.exports = {
+	postChat,
+	getChat,
+	createGroup,
+	deleteGroup,
+	renameGroup,
+	removeFromGroup,
+	addToGroup,
+};
