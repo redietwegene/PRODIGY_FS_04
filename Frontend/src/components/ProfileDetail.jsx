@@ -1,8 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MdOutlineClose } from "react-icons/md";
-import { setProfileDetail, setUpdateProfileModal } from "../redux/slices/conditionSlice";
-// import UpdateProfileModal from "./updateProfile";
+import { setProfileDetail,  } from "../redux/slices/conditionSlice";
+
 
 const ProfileDetail = () => {
     const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const ProfileDetail = () => {
                         </h3>
                         <div className="flex gap-4">
                             <button
-                                onClick={() => dispatch(setUpdateProfileModal(true))}
+                               
                                 className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition"
                             >
                                 Update

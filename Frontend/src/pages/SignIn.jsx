@@ -68,7 +68,7 @@ const SignIn = () => {
         <div className="flex items-center justify-center min-h-screen">
             <div className="w-full max-w-sm p-8 bg-gray-800 rounded-lg shadow-lg">
                 <h2 className="text-2xl font-semibold text-center text-white mb-6">
-                    SignIn ChatApp
+                    Login ChatApp
                 </h2>
                 <form className="space-y-4">
                     <div>
@@ -109,7 +109,7 @@ const SignIn = () => {
                             className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                             disabled={load !== ""}
                         >
-                            {load === "" ? "Sign In" : load}
+                            {load === "" ? "Login " : load}
                         </button>
                     </div>
 
